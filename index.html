@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng dẫn tạo cấu trúc dự án N-Layer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .section h3 {
+            color: #34495e;
+            font-size: 1.4em;
+            margin: 20px 0 15px 0;
+        }
+
+        .note {
+            background: #e8f4fd;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .note::before {
+            content: "📝";
+            position: absolute;
+            top: -5px;
+            left: 15px;
+            background: white;
+            padding: 0 5px;
+            font-size: 1.2em;
+        }
+
+        .note p {
+            margin: 5px 0;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+        }
+
+        .step {
+            counter-increment: step-counter;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .image-placeholder {
+            background: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-align: center;
+            margin: 20px auto;
+            color: #7f8c8d;
+            font-style: italic;
+            max-width: 600px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .image-placeholder:hover {
+            border-color: #95a5a6;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .image-placeholder img {
+            max-width: 100%;
+            max-height: 400px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .image-placeholder img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Ensure no horizontal scrolling */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            background: white;
+            overflow-x: hidden;
+        }
+
+        .content {
+            padding: 40px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .layer-info {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .layer-info h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .architecture-diagram {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Menu Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            text-align: center;
+            border-bottom: 3px solid #34495e;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .menu {
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 15px 25px;
+            margin: 3px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95em;
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-left-color: #3498db;
+            transform: translateX(5px);
+            color: white;
+        }
+
+        .menu-item.active {
+            background: rgba(231, 76, 60, 0.2);
+            border-left-color: #e74c3c;
+            color: white;
+            font-weight: 600;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: #3498db;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .menu-item.active::before {
+            background: #e74c3c;
+            transform: scaleY(1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            background: white;
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #3498db;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Section spacing for menu navigation */
+        .section {
+            scroll-margin-top: 80px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Toggle Button for Mobile -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    
+    <!-- Overlay for Mobile -->
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <div class="container">
+        <!-- Sidebar Menu -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>📚 Menu Hướng Dẫn</h3>
+            </div>
+            <nav class="menu" id="menu">
+                <a href="#overview" class="menu-item">📋 Tổng quan</a>
+                <a href="#bo-layer" class="menu-item">🔧 Tầng BO</a>
+                <a href="#ui-design" class="menu-item">🎨 Thiết kế UI</a>
+                <a href="#dao-layer" class="menu-item">💾 Tầng DAO</a>
+                <a href="#repo-layer" class="menu-item">📚 Tầng Repository</a>
+                <a href="#ui-code" class="menu-item">🖥️ Code Giao diện</a>
+                <a href="#database" class="menu-item">🔗 Cơ sở dữ liệu</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>TẠO CẤU TRÚC DỰ ÁN SỬ DỤNG N-LAYER</h1>
+                <p>Hướng dẫn chi tiết xây dựng kiến trúc nhiều tầng</p>
+            </div>
+
+            <div class="content">
+            <div class="architecture-diagram" id="overview">
+                <h2>🏗️ Cấu trúc N-Layer Architecture</h2>
+                <div class="image-placeholder">
+				<img src="1.png"/>
+                    [Hình ảnh cấu trúc N-Layer - media/image1.png]
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>+ Nhớ tạo mỗi tầng là 1 Project.</strong></p>
+                <p><strong>+ Nhớ Add Reference Project theo hình</strong></p>
+            </div>
+
+            <div class="section" id="bo-layer">
+                <h2>🔧 THAO TÁC Ở TẦNG BO</h2>
+                
+                <div class="steps">
+                    <div class="step">
+                        <h3>Install Library: NuGet Package</h3>
+                        <div class="image-placeholder">
+						<img src="2.png"/>
+                            [Hình ảnh cài đặt NuGet Package - media/image2.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Mở NuGet Console</h3>
+                        <div class="image-placeholder">
+						<img src="3.png"/>
+                            [Hình ảnh mở NuGet Console - media/image3.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Set Startup Project</h3>
+                        <div class="image-placeholder">
+						<img src="4.png"/>
+                            [Hình ảnh Set Startup Project - media/image4.png]
+                        </div>
+                        <div class="image-placeholder">
+						<img src="5.png"/>
+                            [Hình ảnh Run Scaffold - media/image5.png]
+                        </div>
+                        <p><strong>Run Scaffold</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="ui-design">
+                <h2>🎨 THIẾT KẾ GIAO DIỆN</h2>
+                
+                <div class="steps">
+                    <div class="step">
+                        <h3>Đặt tên các input theo đúng cú pháp C#</h3>
+                    </div>
+
+                    <div class="step">
+                        <h3>Thiết kế màn hình đăng nhập (chú ý màu sắc)</h3>
+                        <div class="image-placeholder">
+						<img src="6.png"/>
+                            [Hình ảnh màn hình đăng nhập - media/image6.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Thiết kế màn hình quản lý</h3>
+                        <div class="image-placeholder">
+						<img src="7.png"/>
+                            [Hình ảnh màn hình quản lý - media/image7.png]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="dao-layer">
+                <h2>💾 XỬ LÝ TẦNG DAO</h2>
+                
+                <div class="layer-info">
+                    <h3>Nguyên tắc tầng DAO</h3>
+                    <p>Sử dụng Singleton và new DBContext ở tầng này.</p>
+                </div>
+
+                <div class="image-placeholder">
+				<img src="8.png"/>
+                    [Hình ảnh xử lý tầng DAO - media/image8.png]
+                </div>
+                <p><strong>Kết nối và thao tác CRUD ở tầng này</strong></p>
+            </div>
+
+            <div class="section" id="repo-layer">
+                <h2>📚 XỬ LÝ TẦNG REPOSITORY</h2>
+                
+                <div class="steps">
+                    <div class="step">
+                        <h3>Định nghĩa Interface (nhớ chỉnh internal → public)</h3>
+                        <div class="image-placeholder">
+						<img src="9.png"/>
+                            [Hình ảnh định nghĩa Interface - media/image9.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Tạo Class Implements Interface (Tầng Repository gọi tầng DAO)</h3>
+                        <div class="image-placeholder">
+						<img src="10.png"/>
+                            [Hình ảnh tạo Class Implements Interface - media/image10.png]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="ui-code">
+                <h2>🖥️ XỬ LÝ CODE TẦNG GIAO DIỆN</h2>
+                
+                <div class="steps">
+                    <div class="step">
+                        <h3>Cơ chế truyền dữ liệu từ LoginUI sang Management UI</h3>
+                        <p>(thông qua hàm khởi tạo để phân quyền)</p>
+                        <div class="image-placeholder">
+						<img src="11.png"/>
+                            [Hình ảnh cơ chế truyền dữ liệu - media/image11.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Tiến hành phân quyền cho từng nút theo yêu cầu đề bài</h3>
+                        <div class="image-placeholder">
+						<img src="12.png"/>
+                            [Hình ảnh phân quyền - media/image12.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Load dữ liệu lên DataGridView và ComboBox trong C#</h3>
+                        <div class="highlight">
+                            <p><strong>Vì tính năng này sử dụng nhiều lần nên cần tách 1 hàm để lấy dữ liệu</strong></p>
+                        </div>
+                        <div class="image-placeholder">
+						<img src="13.png"/>
+                            [Hình ảnh load dữ liệu - media/image13.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Xử lý sự kiện khi nhấn 1 dòng trên DataGridView</h3>
+                        <p>Hiển thị dữ liệu lên các input</p>
+                        <div class="image-placeholder">
+						<img src="14.png"/>
+                            [Hình ảnh xử lý sự kiện DataGridView - media/image14.png]
+                        </div>
+                        
+                        <div class="highlight">
+                            <p><strong>Chú ý dynamic row</strong></p>
+                        </div>
+                        <div class="image-placeholder">
+						<img src="15.png"/>
+                            [Hình ảnh dynamic row - media/image15.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Bắt Validation cho các input</h3>
+                        <div class="image-placeholder">
+						<img src="16.png"/>
+                            [Hình ảnh validation input - media/image16.png]
+                        </div>
+                        
+                        <p><strong>Sử dụng hàm Validation trước khi thao tác CRUD</strong></p>
+                        <div class="image-placeholder">
+						<img src="17.png"/>
+                            [Hình ảnh sử dụng validation - media/image17.png]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="database">
+                <h2>🔗 XỬ LÝ KẾT NỐI TRONG CƠ SỞ DỮ LIỆU</h2>
+                
+                <div class="steps">
+                    <div class="step">
+                        <h3>Tạo 1 file JSON với đúng tên: appsettings.json</h3>
+                    </div>
+
+                    <div class="step">
+                        <h3>Cấu hình để copy appsettings.json khi build</h3>
+                        <div class="image-placeholder">
+						<img src="18.png"/>
+                            [Hình ảnh cấu hình copy file - media/image18.png]
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Đọc appsettings.json từ DBContext</h3>
+                        <div class="image-placeholder">
+						<img src="19.png"/>
+                            [Hình ảnh đọc appsettings.json - media/image19.png]
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle mobile menu
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Close mobile menu
+        function closeMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Highlight active menu item based on scroll position
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section, #overview');
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll to sections
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                
+                // Close mobile menu after click
+                closeMenu();
+            });
+        });
+
+        // Close mobile menu when pressing Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        });
+
+        // Auto-highlight first menu item on load
+        window.addEventListener('load', function() {
+            const firstMenuItem = document.querySelector('.menu-item');
+            if (firstMenuItem) {
+                firstMenuItem.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
